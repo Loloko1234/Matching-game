@@ -16,8 +16,13 @@ function LosowePary() {
   const [pary, setPary] = useState([]);
   const [klikniete, setKlikniete] = useState(new Array(16).fill(false));
   const [kliknietePary, setKliknietePary] = useState([]);
-
+  const [klikniecia, setKlikniecia] = useState(0);
+  const [tabela, setTabela] = useState(false);
+  const [wygrana, setWygrana] = useState(false);
   const generujPary = () => {
+    setTabela(true);
+    setWygrana(false);
+    setKlikniecia(0);
     const nowePary = [];
     const liczbyUzyte = {};
 
@@ -41,6 +46,7 @@ function LosowePary() {
   };
 
   const handleKlikniecie = (index) => {
+    setKlikniecia(klikniecia + 1);
     if (kliknietePary.length < 2 && !kliknietePary.includes(index)) {
       const noweKlikniete = [...klikniete];
       noweKlikniete[index] = true;
@@ -67,36 +73,53 @@ function LosowePary() {
   const sprawdzWidocznosc = () => {
     const tabela = document.querySelectorAll(".table.visible");
     if (tabela.length === pary.length) {
-      alert("Gratulacje! Wygrałeś!");
+      setTabela(false);
+      setWygrana(true);
     }
   };
 
   return (
     <div>
-      <button onClick={generujPary}>Generuj Pary</button>
-      <div className="table-container">
-        {pary.map((liczba, index) => (
-          <div
-            className={`table ${klikniete[index] ? "visible" : ""}`}
-            key={index}
-            onClick={() => {
-              handleKlikniecie(index);
-              setTimeout(sprawdzWidocznosc, 1000);
-            }}
-          >
-            {/* Zamiast wyświetlania samej liczby, wyświetl obraz */}
-            {klikniete[index] ? (
-              <img
-                className="imgg"
-                src={obrazy[liczba]}
-                alt={`Obraz_${liczba}`}
-              />
-            ) : (
-              ""
-            )}
-          </div>
-        ))}
-      </div>
+      {tabela ? (
+        <div className="score">Wynik: {klikniecia}</div>
+      ) : (
+        <button className="btn" onClick={generujPary}>
+          Zacznij Gre
+        </button>
+      )}
+      {wygrana ? (
+        <div className="won">
+          <h1 className="won-text">
+            Wygraleś <br />
+            Wynik: <br />
+            <p className="won-numb">{klikniecia}</p>
+          </h1>
+        </div>
+      ) : (
+        <div className="table-container">
+          {pary.map((liczba, index) => (
+            <div
+              className={`table ${klikniete[index] ? "visible" : ""}`}
+              key={index}
+              onClick={() => {
+                handleKlikniecie(index);
+                setTimeout(sprawdzWidocznosc, 1000);
+              }}
+            >
+              {/* Zamiast wyświetlania samej liczby, wyświetl obraz */}
+              {klikniete[index] ? (
+                <img
+                  className="imgg"
+                  src={obrazy[liczba]}
+                  alt={`Obraz_${liczba}`}
+                />
+              ) : (
+                ""
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
